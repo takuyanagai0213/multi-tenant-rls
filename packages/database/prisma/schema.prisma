@@ -1,0 +1,48 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator kysely {
+  provider = "prisma-kysely"
+  output   = "../src"
+  fileName = "types.ts"
+}
+
+enum Tenant {
+  ACME_CORP
+  GLOBEX_INC
+  WAYNE_ENTERPRISES
+  STARK_INDUSTRIES
+}
+
+model Workspace {
+  id        Int      @id @default(autoincrement())
+  name      String
+  slug      String   @unique
+  tenant    Tenant   @default(ACME_CORP)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sites     Site[]
+
+  @@index([tenant])
+}
+
+model Site {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  tenant      Tenant    @default(ACME_CORP)
+  workspaceId Int
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([tenant])
+  @@index([workspaceId])
+}
