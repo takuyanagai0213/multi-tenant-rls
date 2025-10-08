@@ -51,7 +51,7 @@ docker compose up -d
 
 ```bash
 # Generate Prisma Client and Kysely types
-cd packages/database
+cd packages/kysely-prisma-database
 pnpm db:generate
 
 # Run migrations
@@ -151,7 +151,7 @@ pnpm dev                 # Start all services
 pnpm build              # Build all packages
 pnpm test               # Run all tests
 
-# Database (from packages/database)
+# Database (from packages/kysely-prisma-database)
 pnpm db:generate        # Generate Prisma + Kysely types
 pnpm db:migrate         # Run migrations
 pnpm db:studio          # Open Prisma Studio
@@ -258,7 +258,7 @@ SHOW app.current_management_entity;
 **Solution**: Regenerate types
 
 ```bash
-cd packages/database
+cd packages/kysely-prisma-database
 pnpm db:generate
 ```
 

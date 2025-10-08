@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import app from "../../src/index";
-import { prisma } from "@repo/database";
+import { prisma } from "@repo/kysely-prisma-database";
 
 describe("RLS Tenant Isolation E2E", () => {
   beforeAll(async () => {

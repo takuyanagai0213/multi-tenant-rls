@@ -9,18 +9,18 @@ export const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Original implementation: tenant from x-tenant header
+// tRPC with tenant from header
 app.use(
-  "/trpc",
+  "/api/trpc",
   createExpressMiddleware({
     router: appRouter,
     createContext,
   }),
 );
 
-// New implementation: tenant from path parameter
+// tRPC with tenant from path parameter
 app.use(
-  "/:tenant/trpc",
+  "/api/:tenant/trpc",
   createExpressMiddleware({
     router: appRouter,
     createContext: createContextFromPath,
@@ -30,5 +30,7 @@ app.use(
 const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 API server running on http://localhost:${PORT}`);
+  console.log(`🚀 API server (tRPC) running on http://localhost:${PORT}`);
+  console.log(`🔌 tRPC endpoint at http://localhost:${PORT}/trpc`);
+  console.log(`🔌 tRPC with path param at http://localhost:${PORT}/api/:tenant/trpc`);
 });

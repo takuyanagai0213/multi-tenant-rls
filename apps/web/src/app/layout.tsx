@@ -1,6 +1,7 @@
 import "./globals.css";
 import { getTenant } from "@/lib/get-tenant";
 import { getTenantConfig } from "@/config/tenant-config";
+import { Providers } from "./providers";
 
 export const metadata = {
   title: "Multi-Tenant RLS Sample",
@@ -27,7 +28,7 @@ export default async function RootLayout({
         `}</style>
       </head>
       <body className={config.branding.theme === "dark" ? "dark" : ""}>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

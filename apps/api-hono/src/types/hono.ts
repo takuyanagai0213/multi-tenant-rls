@@ -1,4 +1,4 @@
-import type { Tenant } from "@repo/database";
+import type { Tenant } from "@repo/kysely-prisma-database";
 
 // Extend Hono's context variables type
 declare module "hono" {

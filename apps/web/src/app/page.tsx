@@ -2,26 +2,29 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main className="container mx-auto p-6">
-      <h1 className="mb-6 text-4xl font-bold">Multi-Tenant RLS Sample</h1>
-      <p className="mb-8 text-gray-600">
-        PostgreSQL Row Level Security demonstration with Express + tRPC +
-        Next.js
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">Multi-Tenant RLS with Hono RPC</h1>
+      <p className="mb-8">
+        This is a demo application showcasing Row Level Security (RLS) with Hono RPC for type-safe APIs.
       </p>
+
       <div className="space-y-4">
         <Link
-          href="/organizations"
-          className="block rounded bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
+          href="/workspaces"
+          className="block p-4 border rounded hover:bg-gray-50"
         >
-          View Organizations
+          <h2 className="text-xl font-semibold">Workspaces</h2>
+          <p className="text-gray-600">Manage your workspaces</p>
         </Link>
+
         <Link
-          href="/projects"
-          className="block rounded bg-green-600 px-6 py-3 text-white hover:bg-green-700"
+          href="/sites"
+          className="block p-4 border rounded hover:bg-gray-50"
         >
-          View Projects
+          <h2 className="text-xl font-semibold">Sites</h2>
+          <p className="text-gray-600">Manage your sites</p>
         </Link>
       </div>
-    </main>
+    </div>
   );
 }

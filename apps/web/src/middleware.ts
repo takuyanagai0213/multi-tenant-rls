@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getTenantFromDomain } from "./config/tenant";
+import { getTenantFromDomain } from "./config/tenant-config";
 
 /**
  * Middleware: リクエストごとにテナントを判定し、ヘッダーに注入

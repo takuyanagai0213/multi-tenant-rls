@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import type { Tenant } from "@repo/database";
+import type { Tenant } from "@repo/kysely-prisma-database";
 
 /**
  * Server Componentでテナントを取得

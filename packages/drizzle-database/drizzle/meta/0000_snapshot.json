@@ -1,0 +1,156 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "Workspace": {
+      "name": "Workspace",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tenant": {
+          "name": "tenant",
+          "type": "Tenant",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ACME_CORP'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "Workspace_tenant_idx": {
+          "name": "Workspace_tenant_idx",
+          "columns": ["tenant"],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Workspace_slug_unique": {
+          "name": "Workspace_slug_unique",
+          "columns": ["slug"]
+        }
+      }
+    },
+    "Site": {
+      "name": "Site",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tenant": {
+          "name": "tenant",
+          "type": "Tenant",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ACME_CORP'"
+        },
+        "workspaceId": {
+          "name": "workspaceId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "Site_tenant_idx": {
+          "name": "Site_tenant_idx",
+          "columns": ["tenant"],
+          "isUnique": false
+        },
+        "Site_workspaceId_idx": {
+          "name": "Site_workspaceId_idx",
+          "columns": ["workspaceId"],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "Site_workspaceId_Workspace_id_fk": {
+          "name": "Site_workspaceId_Workspace_id_fk",
+          "tableFrom": "Site",
+          "tableTo": "Workspace",
+          "columnsFrom": ["workspaceId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {
+    "Tenant": {
+      "name": "Tenant",
+      "values": ["ACME_CORP", "GLOBEX_INC", "WAYNE_ENTERPRISES", "STARK_INDUSTRIES"]
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

@@ -133,10 +133,10 @@ express-trpc-rls-sample/
 
 ### 1. Database Package Structure
 
-**Database Package** (`packages/database`):
+**Database Package** (`packages/kysely-prisma-database`):
 
 ```typescript
-// packages/database/package.json
+// packages/kysely-prisma-database/package.json
 {
   "name": "@repo/database",
   "version": "0.0.0",
@@ -161,21 +161,21 @@ express-trpc-rls-sample/
 ```
 
 ```typescript
-// packages/database/src/index.ts
+// packages/kysely-prisma-database/src/index.ts
 export { prisma } from "./client";
 export { db } from "./kysely";
 export type * from "./types";
 ```
 
 ```typescript
-// packages/database/src/client.ts
+// packages/kysely-prisma-database/src/client.ts
 import { PrismaClient } from "@prisma/client";
 
 export const prisma = new PrismaClient();
 ```
 
 ```typescript
-// packages/database/src/kysely.ts
+// packages/kysely-prisma-database/src/kysely.ts
 import { Kysely, PostgresDialect } from "kysely";
 import postgres from "postgres";
 import type { DB } from "./types";
@@ -190,7 +190,7 @@ export const db = new Kysely<DB>({
 **Prisma Schema**:
 
 ```prisma
-// packages/database/prisma/schema.prisma
+// packages/kysely-prisma-database/prisma/schema.prisma
 
 datasource db {
   provider = "postgresql"
@@ -242,7 +242,7 @@ model Project {
 }
 ```
 
-**RLS Policy Setup** (`packages/database/prisma/rls-policies.sql`):
+**RLS Policy Setup** (`packages/kysely-prisma-database/prisma/rls-policies.sql`):
 
 ```sql
 -- Enable RLS on tables
@@ -277,7 +277,7 @@ CREATE POLICY allow_with_session_project ON "Project"
 
 ```bash
 # After running migrations
-cd packages/database
+cd packages/kysely-prisma-database
 psql $DATABASE_URL -f prisma/rls-policies.sql
 ```
 
@@ -328,7 +328,7 @@ export default defineConfig({
 
 ```typescript
 import { beforeAll, afterAll } from "vitest";
-import { prisma } from "@repo/database";
+import { prisma } from "@repo/kysely-prisma-database";
 
 // Setup test database before all tests
 beforeAll(async () => {
@@ -350,7 +350,7 @@ afterAll(async () => {
 
 ```typescript
 // apps/web/src/config/management-entity.ts
-import type { ManagementEntity } from "@repo/database";
+import type { ManagementEntity } from "@repo/kysely-prisma-database";
 
 const DOMAIN_MAPPING: Record<string, ManagementEntity> = {
   "advertiser.platform-a.example.com": "ACME_CORP",
@@ -391,8 +391,8 @@ export function getCurrentManagementEntity(): ManagementEntity {
 // apps/api/src/trpc/context.ts
 import { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import { TRPCError } from "@trpc/server";
-import { prisma, db } from "@repo/database";
-import type { ManagementEntity } from "@repo/database";
+import { prisma, db } from "@repo/kysely-prisma-database";
+import type { ManagementEntity } from "@repo/kysely-prisma-database";
 
 export const createContext = async (opts: CreateExpressContextOptions) => {
   // Read management entity from custom header sent by frontend
@@ -936,7 +936,7 @@ describe("Project Router E2E", () => {
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import request from "supertest";
 import { app } from "../../src/index";
-import { prisma } from "@repo/database";
+import { prisma } from "@repo/kysely-prisma-database";
 
 describe("RLS Management Entity Isolation E2E", () => {
   beforeAll(async () => {
@@ -1058,7 +1058,7 @@ pnpm install
 docker compose up -d
 
 # Database: Generate and migrate
-cd packages/database
+cd packages/kysely-prisma-database
 pnpm db:generate  # Generate Prisma Client and Kysely types
 pnpm db:migrate   # Run migrations
 psql $DATABASE_URL -f prisma/rls-policies.sql  # Apply RLS policies
@@ -1071,7 +1071,7 @@ cd apps/api && pnpm dev   # Port 4000
 cd apps/web && pnpm dev   # Port 3000
 
 # Database management
-cd packages/database
+cd packages/kysely-prisma-database
 pnpm db:studio    # Open Prisma Studio
 
 # Run tests
@@ -1139,7 +1139,7 @@ pnpm install
 docker compose up -d
 
 # Setup database
-cd packages/database
+cd packages/kysely-prisma-database
 pnpm db:generate
 pnpm db:migrate
 psql $DATABASE_URL -f prisma/rls-policies.sql
@@ -1181,7 +1181,7 @@ Migrate existing standalone RLS policy SQL files (`rls-policies.sql`) into Prism
 
 The `express-trpc-rls-sample` project currently manages RLS policies in a separate SQL file:
 
-- **Location**: `packages/database/prisma/rls-policies.sql`
+- **Location**: `packages/kysely-prisma-database/prisma/rls-policies.sql`
 - **Application**: Manually applied via custom scripts
 - **Problem**: RLS policies are not synchronized with Prisma schema migrations
 
@@ -1196,7 +1196,7 @@ The `express-trpc-rls-sample` project currently manages RLS policies in a separa
 
 #### Step 1: Review Current RLS Policy
 
-**Current File**: `packages/database/prisma/rls-policies.sql`
+**Current File**: `packages/kysely-prisma-database/prisma/rls-policies.sql`
 
 ```sql
 -- Enable RLS on tables
@@ -1232,7 +1232,7 @@ CREATE POLICY allow_with_session_site ON "Site"
 **Command**:
 
 ```bash
-cd packages/database
+cd packages/kysely-prisma-database
 pnpm prisma migrate dev --name integrate_rls_policies --create-only
 ```
 
@@ -1350,7 +1350,7 @@ model NewTable {
 **Step 2**: Create migration with RLS policies:
 
 ```bash
-cd packages/database
+cd packages/kysely-prisma-database
 pnpm prisma migrate dev --name add_new_table_with_rls --create-only
 ```
 
@@ -1435,7 +1435,7 @@ Use the verification script to test with different tenant contexts.
 **If migration fails:**
 
 ```bash
-cd packages/database
+cd packages/kysely-prisma-database
 
 # Mark migration as rolled back
 pnpm prisma migrate resolve --rolled-back YYYYMMDDHHMMSS_integrate_rls_policies

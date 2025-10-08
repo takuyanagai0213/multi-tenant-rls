@@ -10,9 +10,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@repo/database": "workspace:*",
+    "@repo/kysely-prisma-database": "workspace:*",
+    "@tanstack/react-query": "^5.90.2",
+    "@tanstack/react-query-devtools": "^5.90.2",
     "@trpc/client": "^11.0.0-rc.659",
     "@trpc/server": "^11.0.0-rc.659",
+    "api-hono-rpc": "workspace:*",
+    "hono": "^4.6.0",
     "next": "^15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

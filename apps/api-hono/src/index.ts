@@ -1,36 +1,48 @@
 import "./types/hono"; // Import Hono context type extensions
 import { serve } from "@hono/node-server";
-import { Hono } from "hono";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { rlsMiddleware } from "./middleware/rls";
-import { rlsPathParamMiddleware } from "./middleware/rls-path-param";
-import { workspaceRoutes } from "./routes/workspace";
-import { siteRoutes } from "./routes/site";
+import { rlsMiddleware, rlsPathParamMiddleware } from "./middleware/rls";
+import { apiRoutes } from "./routes";
 
-const app = new Hono();
+const app = new OpenAPIHono();
 
 // Global middleware
 app.use("*", logger());
 app.use("*", cors());
 
-// Original implementation: tenant from x-tenant header
-app.use("/workspaces", ...rlsMiddleware);
-app.use("/sites", ...rlsMiddleware);
-app.route("/workspaces", workspaceRoutes);
-app.route("/sites", siteRoutes);
+// Apply RLS middleware to API routes (header-based)
+app.use("/(workspaces|sites)/*", ...rlsMiddleware);
 
-// New implementation: tenant from path parameter
-app.use("/:tenant/workspaces", ...rlsPathParamMiddleware);
-app.use("/:tenant/sites", ...rlsPathParamMiddleware);
-app.route("/:tenant/workspaces", workspaceRoutes);
-app.route("/:tenant/sites", siteRoutes);
+// Apply RLS middleware to API routes (path parameter-based)
+app.use("/*", ...rlsPathParamMiddleware);
+
+// Mount OpenAPI routes
+app.route("/", apiRoutes);
 
 // Health check
 app.get("/health", (c) => c.json({ status: "ok" }));
 
+// OpenAPI documentation
+app.doc31("/openapi.json", {
+  openapi: "3.1.0",
+  info: {
+    version: "1.0.0",
+    title: "Multi-Tenant RLS API",
+    description: "API with Row-Level Security using PostgreSQL",
+  },
+  servers: [
+    {
+      url: "http://localhost:4000",
+      description: "Development server",
+    },
+  ],
+});
+
 const port = Number(process.env.PORT) || 4000;
-console.log(`Server running on http://localhost:${port}`);
+
+console.log(`🚀 Server running on http://localhost:${port}`);
 
 serve({
   fetch: app.fetch,

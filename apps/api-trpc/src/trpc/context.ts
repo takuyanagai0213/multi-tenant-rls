@@ -1,6 +1,6 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import { TRPCError } from "@trpc/server";
-import { prisma, db, Tenant } from "@repo/database";
+import { prisma, db, Tenant } from "@repo/kysely-prisma-database";
 
 // Read tenant from tenant header
 export const createContext = async (opts: CreateExpressContextOptions) => {
@@ -25,10 +25,17 @@ export const createContextFromPath = async (
   opts: CreateExpressContextOptions,
 ) => {
   // Express routing ensures this exists (route: /api/:tenant/trpc)
-  const tenant = opts.req.params.tenant as Tenant;
+  const tenant = opts.req.params.tenant as string;
+
+  if (!Object.values(Tenant).includes(tenant as Tenant)) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Invalid tenant",
+    });
+  }
 
   return {
-    tenant,
+    tenant: tenant as Tenant,
     prisma,
     db,
   };

@@ -1,6 +1,6 @@
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import type { AppRouter } from "../../../api-trpc/src/trpc/router";
-import { getCurrentTenant } from "@/config/tenant";
+import { getCurrentTenant } from "@/config/tenant-config";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 

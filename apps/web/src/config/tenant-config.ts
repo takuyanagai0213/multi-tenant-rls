@@ -1,4 +1,4 @@
-import type { Tenant } from "@repo/database";
+import type { Tenant } from "@repo/kysely-prisma-database";
 
 /**
  * テナント別の設定を定義
@@ -7,20 +7,11 @@ import type { Tenant } from "@repo/database";
  * アプリケーション全体に反映される
  */
 
-export interface TenantFeatures {
-  /** ASPプロモーション機能の有効化 */
-  aspPromotion: boolean;
-  /** クリエイティブレポート機能の有効化 */
-  creativeReport: boolean;
-  /** ポストバック設定の有効化 */
-  postback: boolean;
-  /** トラッキングリンク機能の有効化 */
-  trackingLink: boolean;
-  /** ABテスト機能の有効化 */
-  abTest: boolean;
-  /** ロスデータダウンロード機能の有効化 */
-  lossDataDownload: boolean;
-}
+const DOMAIN_MAPPING: Record<string, Tenant> = {
+  "tenant-a-example-domain": "ACME_CORP",
+  "tenant-b-example-domain": "GLOBEX_INC",
+  localhost: "ACME_CORP",
+};
 
 export interface TenantBranding {
   /** サービス名 */
@@ -35,21 +26,8 @@ export interface TenantBranding {
   primaryColor: string;
 }
 
-export interface TenantRoutes {
-  /** ホームパス */
-  home: string;
-  /** ダッシュボードパス */
-  dashboard: string;
-  /** レポートパス */
-  report: string;
-  /** 契約管理パス */
-  contracts: string;
-}
-
 export interface TenantConfig {
-  features: TenantFeatures;
   branding: TenantBranding;
-  routes: TenantRoutes;
 }
 
 /**
@@ -57,47 +35,35 @@ export interface TenantConfig {
  */
 export const TENANT_CONFIG: Record<Tenant, TenantConfig> = {
   ACME_CORP: {
-    features: {
-      aspPromotion: false,
-      creativeReport: true,
-      postback: true,
-      trackingLink: false,
-      abTest: false,
-      lossDataDownload: false,
-    },
     branding: {
       name: "ACME Corp Platform",
       logoPath: "/logos/acme.svg",
       theme: "dark",
       primaryColor: "#3b82f6",
     },
-    routes: {
-      home: "/",
-      dashboard: "/dashboard",
-      report: "/report",
-      contracts: "/contracts",
-    },
   },
   GLOBEX_INC: {
-    features: {
-      aspPromotion: true,
-      creativeReport: false,
-      postback: false,
-      trackingLink: true,
-      abTest: true,
-      lossDataDownload: true,
-    },
     branding: {
       name: "Globex Platform",
       logoText: "Globex+",
       theme: "light",
       primaryColor: "#10b981",
     },
-    routes: {
-      home: "/",
-      dashboard: "/dashboard",
-      report: "/report",
-      contracts: "/contracts",
+  },
+  WAYNE_ENTERPRISES: {
+    branding: {
+      name: "Wayne Enterprises",
+      logoText: "Wayne",
+      theme: "dark",
+      primaryColor: "#1f2937",
+    },
+  },
+  STARK_INDUSTRIES: {
+    branding: {
+      name: "Stark Industries",
+      logoPath: "/logos/stark.svg",
+      theme: "light",
+      primaryColor: "#ef4444",
     },
   },
 } as const;
@@ -115,12 +81,22 @@ export function getTenantConfig(tenant: Tenant): TenantConfig {
   return config;
 }
 
-/**
- * 機能フラグをチェック
- */
-export function hasFeature(
-  tenant: Tenant,
-  feature: keyof TenantFeatures
-): boolean {
-  return getTenantConfig(tenant).features[feature];
+export function getTenantFromDomain(host: string): Tenant | null {
+  const hostname = host.split(":")[0];
+  return DOMAIN_MAPPING[hostname] ?? null;
+}
+
+// Get current tenant from window.location.host
+export function getCurrentTenant(): Tenant {
+  if (typeof window === "undefined") {
+    throw new Error("getCurrentTenant can only be called on client side");
+  }
+
+  const tenant = getTenantFromDomain(window.location.host);
+
+  if (!tenant) {
+    throw new Error(`Unknown domain: ${window.location.host}`);
+  }
+
+  return tenant;
 }

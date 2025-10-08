@@ -1,5 +1,5 @@
 import { beforeAll, afterAll } from "vitest";
-import { prisma } from "@repo/database";
+import { prisma } from "@repo/kysely-prisma-database";
 
 // Setup test database before all tests
 beforeAll(async () => {

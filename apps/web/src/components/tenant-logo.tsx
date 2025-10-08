@@ -1,4 +1,4 @@
-import type { Tenant } from "@repo/database";
+import type { Tenant } from "@repo/kysely-prisma-database";
 import { getTenantConfig } from "@/config/tenant-config";
 import Image from "next/image";
 

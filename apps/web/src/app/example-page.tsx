@@ -96,10 +96,14 @@ export default async function ExamplePage() {
  * ```tsx
  * // 環境変数による分岐が必要
  * const domain = getDomain(headers());
- * if (domain === process.env.NEXT_PUBLIC_AGENCY_DOMAIN) {
- *   return <AgencyPage />;
+ * if (domain === process.env.NEXT_PUBLIC_TENANT_DOMAIN) {
+ *   return <TenantAPage />;
  * } else {
- *   return <CanvasPage />;
+ *   return <TenantAPage />;
+ * } else {
+ *   return <TenantBPage />;
+ * } else {
+ *   return <TenantCPage />;
  * }
  * ```
  *

@@ -132,12 +132,12 @@ export default async function Dashboard() {
 
   return (
     <>
-      {/* Onetag+のみ表示 */}
+      {/* テナントBのみ表示 */}
       <FeatureGate tenant={tenant} feature="aspPromotion">
         <ASPPromotionSection />
       </FeatureGate>
 
-      {/* Canvasのみ表示 */}
+      {/* テナントBのみ表示 */}
       <FeatureGate tenant={tenant} feature="creativeReport">
         <CreativeReportSection />
       </FeatureGate>
@@ -208,7 +208,7 @@ return <SidebarComponent />;
 
 ## 新規テナント追加手順
 
-1. `packages/database/prisma/schema.prisma` にテナントEnumを追加
+1. `packages/kysely-prisma-database/prisma/schema.prisma` にテナントEnumを追加
 2. `config/tenant.ts` のドメインマッピングに追加
 3. `config/tenant-config.ts` にテナント設定を追加
 

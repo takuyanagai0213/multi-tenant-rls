@@ -1,6 +1,6 @@
 "use client";
 
-import { getCurrentTenant } from "@/config/tenant";
+import { getCurrentTenant } from "@/config/tenant-config";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_HONO_API_URL || "http://localhost:4001";
